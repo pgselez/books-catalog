@@ -73,6 +73,12 @@ def my_print():
         print(i)
 
 
+@timer
+def my_print2():
+    for i in range(80000):
+        print(i)
+
+
 my_web_page = WebPage()
 
 # url = my_web_page.my_page('sergei4e')
