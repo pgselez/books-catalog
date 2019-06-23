@@ -1708,7 +1708,7 @@ body {
 /*----------------------------------------*/
 
 .banner-static-area {
-    background: rgba(0, 0, 0, 0) url("img/banner/7.jpg") repeat scroll center center;
+    background: rgba(0, 0, 0, 0) url("/static/img/banner/7.jpg") repeat scroll center center;
 }
 
 /*----------------------------------------*/
@@ -1805,7 +1805,7 @@ body {
     border-bottom: 1px solid #e5e5e5;
 }
 .block-newsletter {
-    background: #f07c29 url("img/banner/10.jpg") no-repeat scroll center top;
+    background: #f07c29 url("/static/img/banner/10.jpg") no-repeat scroll center top;
     padding: 45px 25px 25px;
     position: relative;
     text-align: center;
@@ -1902,7 +1902,7 @@ body {
 /*----------------------------------------*/
 
 .testimonial-area {
-    background: rgba(0, 0, 0, 0) url("img/banner/11.jpg") no-repeat scroll center center;
+    background: rgba(0, 0, 0, 0) url("/static/img/banner/11.jpg") no-repeat scroll center center;
 }
 .testimonial-img a {
     border: 1px solid #fff;
@@ -2376,7 +2376,7 @@ a#scrollUp:hover {
     -moz-border-right-colors: none;
     -moz-border-top-colors: none;
     -moz-user-select: none;
-    background: white url("img/icon-img/select-2.png") no-repeat scroll 90% 50%;
+    background: white url("/static/img/icon-img/select-2.png") no-repeat scroll 90% 50%;
     border-color: -moz-use-text-color #e5e5e5 -moz-use-text-color -moz-use-text-color;
     border-image: none;
     border-radius: 15px 0 0 15px;
@@ -2746,7 +2746,7 @@ a#scrollUp:hover {
     z-index: 1;
 }
 .home-3 {
-    background: #ffffff url("img/banner/13.jpg") no-repeat scroll center top;
+    background: #ffffff url("/static/img/banner/13.jpg") no-repeat scroll center top;
 }
 .home-3 .header-top-area,
 .home-3 .header-mid-area,
@@ -2861,7 +2861,7 @@ a#scrollUp:hover {
     z-index: 1;
 }
 .home-3 .block-newsletter {
-    background: #22aeac url("img/banner/19.jpg") no-repeat scroll center top;
+    background: #22aeac url("/static/img/banner/19.jpg") no-repeat scroll center top;
 }
 .home-3 .tab-active.owl-carousel.owl-theme .owl-controls .owl-nav div:hover,
 .home-3 .post-active.owl-carousel.owl-theme .owl-controls .owl-nav div:hover {
@@ -3097,7 +3097,7 @@ nav.menu .cr-dropdown ul {
     font-size: 17px;
 }
 .home-4 .block-newsletter {
-    background: #00abe0 url("img/banner/22.jpg") no-repeat scroll center top;
+    background: #00abe0 url("/static/img/banner/22.jpg") no-repeat scroll center top;
     margin-top: 0;
 }
 .home-4 .block-newsletter::after {
@@ -3341,7 +3341,7 @@ nav.menu .cr-dropdown ul {
     color: #22aeac;
 }
 .home-5 .block-newsletter {
-    background: #22aeac url("img/banner/25.jpg") no-repeat scroll center top;
+    background: #22aeac url("/static/img/banner/25.jpg") no-repeat scroll center top;
 }
 .home-5 .block-newsletter::before {
     background: #22aeac none repeat scroll 0 0;
@@ -3350,7 +3350,7 @@ nav.menu .cr-dropdown ul {
     border: 2px solid #22aeac;
 }
 .home-5 .testimonial-area {
-    background: rgba(0, 0, 0, 0) url("img/banner/26.jpg") no-repeat center center;
+    background: rgba(0, 0, 0, 0) url("/static/img/banner/26.jpg") no-repeat center center;
 }
 .home-5 .testimonial-img a {
     border: 1px solid #a5a5a5;
@@ -3412,7 +3412,7 @@ nav.menu .cr-dropdown ul {
     margin-right: 8px;
 }
 .home-6 .header-mid-area {
-    background: #ffffff url("img/banner/27.jpg") repeat scroll 0 0;
+    background: #ffffff url("/static/img/banner/27.jpg") repeat scroll 0 0;
 }
 .home-6 .header-top-area {
     background: #499E46 none repeat scroll 0 0;
@@ -5197,7 +5197,7 @@ nav.menu .cr-dropdown ul {
     padding-right: 6px;
 }
 .counter-area {
-    background: rgba(0, 0, 0, 0) url("img/banner/38.jpg") repeat scroll center center;
+    background: rgba(0, 0, 0, 0) url("/static/img/banner/38.jpg") repeat scroll center center;
 }
 .single-counter h2 {
     font-size: 40px;
@@ -6245,7 +6245,7 @@ p.lost-password a:hover {
     height: 39px;
     padding: 0 35px 0 5px;
     width: auto;
-    background: rgba(0, 0, 0, 0) url("img/icon-img/select.png") no-repeat scroll right 0.5rem center / 2.25rem 2.25rem;
+    background: rgba(0, 0, 0, 0) url("/static/img/icon-img/select.png") no-repeat scroll right 0.5rem center / 2.25rem 2.25rem;
 }
 .select-option-part > label,
 .quickview-color-wrap > label {
