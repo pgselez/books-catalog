@@ -22,7 +22,7 @@ from catalog import views
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('my_admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('shop.html', views.catalog, name='catalog'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
