@@ -24,5 +24,5 @@ from catalog import views
 urlpatterns = [
     path('my_admin/', admin.site.urls),
     path('', views.index, name='index'),
-    path('shop.html', views.catalog, name='catalog'),
+    path('<slug:slug>/', views.catalog, name='catalog'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -19,12 +19,19 @@ class Category(models.Model):
 
 class Book(models.Model):
     name = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, blank=True, unique=True)
     description = models.TextField()
-    image = models.ImageField()
+    drive_image = models.ImageField(blank=True)
+    origin_image = models.URLField()
     cats = models.ManyToManyField(Category)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        return super().save(*args, **kwargs)
 
 
 class Review(models.Model):
