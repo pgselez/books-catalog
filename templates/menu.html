@@ -7,12 +7,12 @@
                     <nav>
                         <ul>
                             <li class="active">
-                                <a href="/">Books<i class="fa fa-angle-down"></i></a>
+                                <a href="{% url 'index' %}">Books<i class="fa fa-angle-down"></i></a>
                                 <div class="mega-menu">
                                     {% for chunk in categories %}
                                     <span>
                                         {% for cat in chunk %}
-                                        <a href="/{{cat.slug}}">{{ cat.name }}</a>
+                                        <a href="{% url 'catalog' cat.slug %}">{{ cat.name }}</a>
                                         {% endfor %}
                                     </span>
                                     {% endfor %}
@@ -38,17 +38,17 @@
                 <div class="mobile-menu">
                     <nav id="mobile-menu-active">
                         <ul id="nav">
-                            <li><a href="/">Books</a>
+                            <li><a href="{% url 'index' %}">Books</a>
                                 <ul>
                                     {% for chunk in categories %}
                                     {% for cat in chunk %}
-                                    <li><a href="/{{ cat.slug }}">{{ cat.name }}</a></li>
+                                    <li><a href="{% url 'catalog' cat.slug %}">{{ cat.name }}</a></li>
                                     {% endfor %}
                                     {% endfor %}
                                 </ul>
                             </li>
-                            <li><a href="/">About</a></li>
-                            <li><a href="/">Contact</a></li>
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">Contact</a></li>
                         </ul>
                     </nav>
                 </div>

@@ -1,5 +1,5 @@
 .product-img, .most-product-img {
-    height: 250px;
+    max-height: 250px;
 }
 
 .product-details h4 {

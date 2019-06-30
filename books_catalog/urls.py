@@ -19,10 +19,21 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from catalog import views
+from seo.views import robots_txt_view
+from django.urls import include
 
 
 urlpatterns = [
     path('my_admin/', admin.site.urls),
     path('', views.index, name='index'),
-    path('<slug:slug>/', views.catalog, name='catalog'),
+    path('robots.txt', robots_txt_view, name='robots_txt'),
+    path('category/<slug:slug>/', views.catalog, name='catalog'),
+    path('book/<slug:slug>/', views.book, name='book'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns

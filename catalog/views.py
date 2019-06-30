@@ -1,12 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponseBadRequest
-from .models import Category
-
-
-def chunks(l, n):
-    """Yield successive n-sized chunks from l."""
-    for i in range(0, len(l), n):
-        yield l[i:i + n]
+from .models import Category, Book
+from . import chunks
 
 
 def index(request):
@@ -17,21 +11,22 @@ def index(request):
 
 
 def catalog(request, **kwargs):
-
-    breakpoint()
-
     slug = kwargs.get('slug', None)
-    if not slug:
-        return HttpResponseBadRequest()
-
     category = Category.objects.get(slug=slug)
-    books = category.book_set.all()
-
     cats = [x for x in Category.objects.all()]
     context = {
         'categories': list(chunks(cats, 4)),
-        'books': books,
         'main_cat': category
     }
-    response = render(request, 'catalog.html', context)
-    return response
+    return render(request, 'catalog.html', context)
+
+
+def book(request, **kwargs):
+    slug = kwargs.get('slug', None)
+    book = Book.objects.get(slug=slug)
+    cats = [x for x in Category.objects.all()]
+    context = {
+        'categories': list(chunks(cats, 4)),
+        'book': book
+    }
+    return render(request, 'book.html', context)
