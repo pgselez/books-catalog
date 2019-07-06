@@ -39,21 +39,11 @@ class Character(models.Model):
         return super().save(*args, **kwargs)
 
 
-class Photo(models.Model):
-    photo = models.ImageField(blank=True)
-    original = models.URLField()
-    character = models.ForeignKey(Character, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.character.name
-
-
 class Book(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, blank=True, unique=True)
     source = models.URLField(blank=True)
     description = models.TextField()
-    drive_image = models.ImageField(blank=True)
     origin_image = models.URLField()
 
     original_title = models.CharField(max_length=255, blank=True)
@@ -61,7 +51,7 @@ class Book(models.Model):
     edition_language = models.CharField(max_length=55, blank=True)
     literary_awards = models.TextField(blank=True)
 
-    char = models.ManyToManyField(Character)
+    char = models.ManyToManyField(Character, blank=True)
     cats = models.ManyToManyField(Category)
 
     objects = models.Manager()
@@ -88,3 +78,14 @@ class Review(models.Model):
 
     def __str__(self):
         return self.book
+
+
+class Photo(models.Model):
+    photo = models.ImageField(blank=True)
+    name = models.CharField(max_length=255, blank=True)
+    original = models.URLField()
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, blank=True, null=True)
+    character = models.ForeignKey(Character, on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return self.name

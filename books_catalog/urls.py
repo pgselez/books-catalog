@@ -24,8 +24,9 @@ from django.urls import include
 
 
 urlpatterns = [
-    path('my_admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('', views.index, name='index'),
+    path('run-crawler', views.crawler, name='crawler'),
     path('robots.txt', robots_txt_view, name='robots_txt'),
     path('category/<slug:slug>/', views.catalog, name='catalog'),
     path('book/<slug:slug>/', views.book, name='book'),

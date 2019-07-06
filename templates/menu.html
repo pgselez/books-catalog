@@ -1,3 +1,7 @@
+{% load tags_custom %}
+
+{% tags_categories as my_categories %}
+
 <!-- main-menu-area-start -->
 <div class="main-menu-area hidden-sm hidden-xs sticky-header-1" id="header-sticky">
     <div class="container">
@@ -9,10 +13,11 @@
                             <li class="active">
                                 <a href="{% url 'index' %}">Books<i class="fa fa-angle-down"></i></a>
                                 <div class="mega-menu">
-                                    {% for chunk in categories %}
+                                    {% for chunk in my_categories %}
                                     <span>
                                         {% for cat in chunk %}
-                                        <a href="{% url 'catalog' cat.slug %}">{{ cat.name }}</a>
+                                        <a href="{% url 'catalog' cat.slug %}">
+                                            {{ cat.name | s_upper }}</a>
                                         {% endfor %}
                                     </span>
                                     {% endfor %}
@@ -40,7 +45,7 @@
                         <ul id="nav">
                             <li><a href="{% url 'index' %}">Books</a>
                                 <ul>
-                                    {% for chunk in categories %}
+                                    {% for chunk in my_categories %}
                                     {% for cat in chunk %}
                                     <li><a href="{% url 'catalog' cat.slug %}">{{ cat.name }}</a></li>
                                     {% endfor %}
