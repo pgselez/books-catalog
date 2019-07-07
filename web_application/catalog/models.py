@@ -81,7 +81,7 @@ class Review(models.Model):
 
 
 class Photo(models.Model):
-    photo = models.ImageField(blank=True)
+    photo = models.ImageField(blank=True, upload_to='photos')
     name = models.CharField(max_length=255, blank=True)
     original = models.URLField()
     book = models.ForeignKey(Book, on_delete=models.CASCADE, blank=True, null=True)
