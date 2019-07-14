@@ -25,5 +25,17 @@ def book(request, **kwargs):
 
 def crawler(request, **kwargs):
     if request.user.is_authenticated:
-        Thread(target=run, args=(10000, 15000)).start()
+        start = request.GET.get('start', 0)
+        end = request.GET.get('end', 100000)
+        try:
+            start = int(start)
+        except Exception as e:
+            print(e, type(e))
+            start = 0
+        try:
+            end = int(end)
+        except Exception as e:
+            print(e, type(e))
+            end = 100000
+        Thread(target=run, args=(start, end)).start()
     return redirect('/admin/')

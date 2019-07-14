@@ -4,6 +4,7 @@ services:
 
   db:
     image: postgres
+    env_file: ./web_application/web.env
     ports:
       - "5444:5432"
     volumes:
@@ -11,9 +12,29 @@ services:
 
   web:
     build: ./web_application
+    env_file: ./web_application/web.env
+    command: /code/run_web.sh
     volumes:
       - ./web_application:/code
+      - static_volume:/code/static_root
+      - media_volume:/code/media
     ports:
       - "8000:8000"
     depends_on:
       - db
+
+  nginx:
+    build: ./nginx
+    restart: always
+    volumes:
+      - static_volume:/code/static_root
+      - media_volume:/code/media
+      - ./nginx/logs:/var/log/nginx
+    ports:
+      - 80:80
+    depends_on:
+      - web
+
+volumes:
+  static_volume:
+  media_volume:

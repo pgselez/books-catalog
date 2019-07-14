@@ -43,8 +43,8 @@ class Book(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, blank=True, unique=True)
     source = models.URLField(blank=True)
-    description = models.TextField()
-    origin_image = models.URLField()
+    description = models.TextField(blank=True)
+    origin_image = models.URLField(blank=True)
 
     original_title = models.CharField(max_length=255, blank=True)
     isbn = models.CharField(max_length=255, blank=True)

@@ -18,14 +18,9 @@ django.setup()
 from catalog.models import Book, Category, Character, Photo
 
 
-cats_dict = None
-
-
 def worker(url):
-    global cats_dict
 
-    if not cats_dict:
-        cats_dict = {c.name: c for c in Category.objects.all()}
+    cats_dict = {c.name: c for c in Category.objects.all()}
 
     with HTMLSession() as session:
         response = session.get(url)
@@ -33,9 +28,19 @@ def worker(url):
             print('ERROR', url)
             return
         try:
+
             name = response.html.xpath('//h1')[0].text
-            description = response.html.xpath('//div[@id="description"]/span[2]')[0].text
-            image = response.html.xpath('//img[@id="coverImage"]/@src')[0]
+
+            try:
+                description = response.html.xpath('//div[@id="description"]/span[2]')[0].text
+            except IndexError:
+                description = ''
+
+            try:
+                image = response.html.xpath('//img[@id="coverImage"]/@src')[0]
+            except IndexError:
+                image = ''
+
             cats = response.html.xpath('//a[@class="actionLinkLite bookPageGenreLink"]/text()')
 
             rows = response.html.xpath('//div[@class="clearFloats"]')
@@ -64,20 +69,20 @@ def worker(url):
                 elif key == 'Literary Awards':
                     data['literary_awards'] = row.xpath('//div[@class="infoBoxRowItem"]')[0].text
         except Exception as e:
-            print(e, type(e), url)
+            print(e, type(e), sys.exc_info()[-1].tb_lineno, url)
             return
 
         try:
             Character.objects.bulk_create(
                 data['characters'], ignore_conflicts=True)
         except Exception as e:
-            print(e, type(e))
+            print(e, type(e), sys.exc_info()[-1].tb_lineno)
 
         try:
             chars = Character.objects.filter(
                 slug__in=[x.slug for x in data['characters']])
         except Exception as e:
-            print(e, type(e))
+            print(e, type(e), sys.exc_info()[-1].tb_lineno)
             chars = []
 
         try:
@@ -99,7 +104,10 @@ def worker(url):
             )
 
             for cat in cats:
-                category = cats_dict[cat]
+                if cat in cats_dict:
+                    category = cats_dict[cat]
+                else:
+                    category = Category.objects.create(name=cat)
                 book.cats.add(category)
 
         for char in chars:
@@ -118,7 +126,7 @@ def worker(url):
                 book=book
             )
         except Exception as e:
-            print(e, type(e))
+            print(e, type(e), sys.exc_info()[-1].tb_lineno)
 
         print('OK', url)
 
