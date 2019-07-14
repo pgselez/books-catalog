@@ -11,12 +11,10 @@
                             <li class="active">
                                 <a href="{% url 'index' %}">Books<i class="fa fa-angle-down"></i></a>
                                 <div class="mega-menu">
-                                    {% for chunk in categories %}
+                                    {% for cat in categories %}
                                     <span>
-                                        {% for cat in chunk %}
                                         <a href="{% url 'catalog' cat.slug %}">
                                             {{ cat.name }}</a>
-                                        {% endfor %}
                                     </span>
                                     {% endfor %}
                                 </div>

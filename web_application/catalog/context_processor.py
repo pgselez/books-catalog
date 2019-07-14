@@ -1,3 +1,4 @@
+from django.db.models import Count
 from .models import Category
 
 
@@ -8,6 +9,7 @@ def chunks(l, n):
 
 
 def categories(request):
-    cats = [x for x in Category.objects.all()]
-    result = {'categories': list(chunks(cats, 4))}
+    cats = Category.objects.annotate(
+        books_count=Count('book')).order_by('-books_count')[:40]
+    result = {'categories': cats}
     return result

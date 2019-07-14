@@ -5,3 +5,19 @@
 .product-details h4 {
     height: 2em;
 }
+
+
+.product-wrapper {
+    position: relative;
+    overflow: unset;
+    height: 300px;
+}
+
+
+.shop-main-area #th .row div[class^="col-"] {
+    padding-bottom: 10px;
+}
+
+.product-details h4 {
+    height: auto;
+}

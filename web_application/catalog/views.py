@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.db.models import Count
 from .models import Category, Book
 from .parser import run
 from threading import Thread
@@ -12,7 +13,24 @@ def index(request):
 def catalog(request, **kwargs):
     slug = kwargs.get('slug', None)
     category = Category.objects.get(slug=slug)
-    context = {'main_cat': category}
+
+    lang = request.GET.get('lang', None)
+
+    if lang:
+        books = Book.objects.filter(
+            cats__in=[category], edition_language__iexact=lang)
+    else:
+        books = category.book_set.all()[0:20]
+
+    books_langs = Book.objects.filter(cats__in=[category]).values(
+        'edition_language').annotate(
+        total=Count('edition_language')).order_by('-total')
+
+    context = {
+        'main_cat': category,
+        'books': books,
+        'languages': books_langs
+    }
     return render(request, 'catalog.html', context)
 
 
