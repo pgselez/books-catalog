@@ -135,8 +135,10 @@ def run(start, end, threads=10):
     base_url = 'https://www.goodreads.com/book/show/{}.aaaaaa'
     urls = [base_url.format(i) for i in range(start, end)]
 
-    with ThreadPoolExecutor(max_workers=threads) as executor:
-        executor.map(worker, urls)
+    map(worker, urls)
+    #
+    # with ThreadPoolExecutor(max_workers=threads) as executor:
+    #     executor.map(worker, urls)
 
 
 if __name__ == '__main__':
