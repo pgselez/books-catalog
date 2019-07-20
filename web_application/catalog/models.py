@@ -30,6 +30,8 @@ class Character(models.Model):
     text = models.TextField(blank=True)
     source = models.URLField()
 
+    objects = models.Manager()
+
     def __str__(self):
         return self.name
 
@@ -86,6 +88,8 @@ class Photo(models.Model):
     original = models.URLField()
     book = models.ForeignKey(Book, on_delete=models.CASCADE, blank=True, null=True)
     character = models.ForeignKey(Character, on_delete=models.CASCADE, blank=True, null=True)
+
+    objects = models.Manager()
 
     def __str__(self):
         return self.name

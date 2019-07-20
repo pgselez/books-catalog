@@ -137,3 +137,7 @@ def run(start, end, threads=10):
 
     with ThreadPoolExecutor(max_workers=threads) as executor:
         executor.map(worker, urls)
+
+
+if __name__ == '__main__':
+    run(0, 1000)
