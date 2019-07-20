@@ -16,8 +16,6 @@ services:
     command: /code/run_web.sh
     volumes:
       - ./web_application:/code
-      - static_volume:/code/static_root
-      - media_volume:/code/media
     ports:
       - "8000:8000"
     depends_on:
@@ -27,14 +25,10 @@ services:
     build: ./nginx
     restart: always
     volumes:
-      - static_volume:/code/static_root
-      - media_volume:/code/media
+      - ./web_application/static_root:/code/static_root
+      - ./web_application/media:/code/media
       - ./nginx/logs:/var/log/nginx
     ports:
       - 80:80
     depends_on:
       - web
-
-volumes:
-  static_volume:
-  media_volume:

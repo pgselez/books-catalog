@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 .idea/
 *settings_local.py
+/static_root/
 
 *.env
 
