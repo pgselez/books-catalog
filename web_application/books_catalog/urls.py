@@ -26,11 +26,11 @@ from django.urls import include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('summernote/', include('django_summernote.urls')),
-    path('', views.index, name='index'),
+    path('', views.IndexView.as_view(), name='index'),
     path('run-crawler', views.crawler, name='crawler'),
     path('robots.txt', robots_txt_view, name='robots_txt'),
-    path('category/<slug:slug>/', views.catalog, name='catalog'),
-    path('book/<slug:slug>/', views.book, name='book'),
+    path('category/<slug:slug>/', views.BookListView.as_view(), name='catalog'),
+    path('book/<slug:slug>/', views.BookView.as_view(), name='book'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 

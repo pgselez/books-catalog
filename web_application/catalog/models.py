@@ -75,11 +75,12 @@ class Review(models.Model):
     nickname = models.CharField(max_length=255)
     summary = models.CharField(max_length=255)
     review = models.TextField()
+    data = models.DateTimeField(auto_now=True)
 
     objects = models.Manager()
 
     def __str__(self):
-        return self.book
+        return self.book.name
 
 
 class Photo(models.Model):

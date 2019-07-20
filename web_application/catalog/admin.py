@@ -73,8 +73,19 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
 
 
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ['book_name', 'book_slug', 'summary', 'data']
+    raw_id_fields = ['book']
+
+    def book_name(self, obj):
+        return obj.book.name
+
+    def book_slug(self, obj):
+        return obj.book.slug
+
+
 admin.site.register(Book, BookAdmin)
 admin.site.register(Category, CategoryAdmin)
-admin.site.register(Review)
+admin.site.register(Review, ReviewAdmin)
 admin.site.register(Photo, PhotoAdmin)
 admin.site.register(Character)

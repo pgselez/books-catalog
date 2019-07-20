@@ -1,44 +1,60 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.db.models import Count
+
+from django.views.generic import TemplateView, DetailView, ListView
+
 from .models import Category, Book
 from .parser import run
 from threading import Thread
 
 
-def index(request):
-    response = render(request, 'home.html', {})
-    return response
+class IndexView(TemplateView):
+    template_name = "home.html"
 
 
-def catalog(request, **kwargs):
-    slug = kwargs.get('slug', None)
-    category = Category.objects.get(slug=slug)
+class CatalogView(DetailView):
+    model = Category
+    template_name = 'catalog.html'
 
-    lang = request.GET.get('lang', None)
-
-    if lang:
-        books = Book.objects.filter(
-            cats__in=[category], edition_language__iexact=lang)
-    else:
-        books = category.book_set.all()[0:20]
-
-    books_langs = Book.objects.filter(cats__in=[category]).values(
-        'edition_language').annotate(
-        total=Count('edition_language')).order_by('-total')
-
-    context = {
-        'main_cat': category,
-        'books': books,
-        'languages': books_langs
-    }
-    return render(request, 'catalog.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        books_langs = Book.objects.filter(cats__in=[context['object']]).values(
+                'edition_language').annotate(
+                total=Count('edition_language')).order_by('-total')
+        context['languages'] = books_langs
+        return context
 
 
-def book(request, **kwargs):
-    slug = kwargs.get('slug', None)
-    book = Book.objects.get(slug=slug)
-    context = {'book': book}
-    return render(request, 'book.html', context)
+class BookListView(ListView):
+    model = Book
+    template_name = 'catalog.html'
+    paginate_by = 40
+
+    def get_queryset(self):
+        cat_slug = self.kwargs.get('slug')
+        self.category = Category.objects.get(slug=cat_slug)
+        lang = self.request.GET.get('lang', None)
+        if lang:
+            books = Book.objects.filter(
+                cats__in=[self.category], edition_language__iexact=lang)
+        else:
+            books = Book.objects.filter(cats__in=[self.category])
+        return books.prefetch_related('photo_set')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        books_langs = Book.objects.filter(
+            cats__in=[self.category]).values(
+            'edition_language').annotate(
+            total=Count('edition_language')).order_by('-total')
+        context['languages'] = books_langs
+        context['main_cat'] = self.category
+        return context
+
+
+class BookView(DetailView):
+    model = Book
+    template_name = 'book.html'
 
 
 def crawler(request, **kwargs):

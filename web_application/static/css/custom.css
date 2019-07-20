@@ -21,3 +21,9 @@
 .product-details h4 {
     height: auto;
 }
+
+
+.mt-60 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
