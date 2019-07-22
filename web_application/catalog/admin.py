@@ -74,14 +74,17 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ['book_name', 'book_slug', 'summary', 'data']
+    list_display = ['summary', 'book_link', 'publish', 'data']
+    list_editable = ['publish']
     raw_id_fields = ['book']
 
-    def book_name(self, obj):
-        return obj.book.name
-
-    def book_slug(self, obj):
-        return obj.book.slug
+    def book_link(self, obj):
+        try:
+            a = mark_safe(f'<a href="/book/{obj.book.slug}" '
+                          f'target="_blank">link</a>')
+        except Exception:
+            a = 'not-found'
+        return a
 
 
 admin.site.register(Book, BookAdmin)

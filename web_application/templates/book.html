@@ -1,5 +1,7 @@
 {% extends 'home.html' %}
 
+{% load static %}
+
 {% block content %}
 <!-- breadcrumbs-area-start -->
 <div class="breadcrumbs-area mb-70">
@@ -43,6 +45,7 @@
 									<div class="product-addto-links-text">
 										<p>{{ book.description | safe }}</p>
 									</div>
+									<span id="message"></span>
 								</div>
 							</div>
 						</div>
@@ -52,9 +55,23 @@
 				<!-- product-info-area-start -->
 				<div class="product-info-area mt-80">
 					<!-- Nav tabs -->
+					{% if messages %}
+						{% for message in messages %}
+							<p><b>{{ message }}</b></p>
+						{% endfor %}
+					{% endif %}
+
+					{% if form.subject.errors %}
+						<ol>
+						{% for error in form.subject.errors %}
+							<li><strong>{{ error|escape }}</strong></li>
+						{% endfor %}
+						</ol>
+					{% endif %}
+
 					<ul class="nav nav-tabs" role="tablist">
-						<li class="active"><a href="product-details.html#Details" data-toggle="tab">Details</a></li>
-						<li><a href="product-details.html#Reviews" data-toggle="tab">Reviews 3</a></li>
+						<li class="active"><a href="#details" data-toggle="tab">Details</a></li>
+						<li><a href="#reviews" data-toggle="tab">Reviews 3</a></li>
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="Details">
@@ -81,7 +98,7 @@
 								{% endif %}
 							</div>
 						</div>
-						<div class="tab-pane" id="Reviews">
+						<div class="tab-pane" id="reviews">
 							<div class="valu valu-2">
 								{% if object.review_set.all %}
 								<div class="section-title mb-60 mt-60">
@@ -89,6 +106,7 @@
 								</div>
 								<ul>
 									{% for rw in object.review_set.all %}
+									{% if rw.publish %}
 									<li>
 										<div class="review-title">
 											<h3>{{ rw.summary }}</h3>
@@ -105,35 +123,39 @@
 											</div>
 										</div>
 									</li>
+									{% endif %}
 									{% endfor %}
 								</ul>
 								{% endif %}
 								<div class="review-add">
 									<h3>Do you recommend this book?</h3>
 								</div>
-								<div class="review-form">
-									<div class="single-form">
-										<label>Nickname <sup>*</sup></label>
-										<form action="product-details.html#">
-											<input type="text" />
-										</form>
+								<form action="{% url 'book' object.slug  %}" method="post">
+									{% csrf_token %}
+									<div class="review-form">
+										<div class="single-form">
+											<label>Nickname <sup>*</sup></label>
+											<div class="form-input-wrapper">
+											<input type="text" name="nickname" />
+											</div>
+										</div>
+										<div class="single-form single-form-2">
+											<label>Summary <sup>*</sup></label>
+											<div class="form-input-wrapper">
+											<input type="text" name="summary" />
+											</div>
+										</div>
+										<div class="single-form">
+											<label>Review <sup>*</sup></label>
+											<div class="form-input-wrapper">
+											<textarea name="message" cols="10" rows="4"></textarea>
+											</div>
+										</div>
 									</div>
-									<div class="single-form single-form-2">
-										<label>Summary <sup>*</sup></label>
-										<form action="product-details.html#">
-											<input type="text" />
-										</form>
+									<div class="review-form-button">
+										<input class="btn btn-primary" type="submit" value="Submit Review">
 									</div>
-									<div class="single-form">
-										<label>Review <sup>*</sup></label>
-										<form action="product-details.html#">
-											<textarea name="massage" cols="10" rows="4"></textarea>
-										</form>
-									</div>
-								</div>
-								<div class="review-form-button">
-									<a href="product-details.html#">Submit Review</a>
-								</div>
+								</form>
 							</div>
 						</div>
 					</div>	
@@ -149,7 +171,7 @@
 						<div class="product-wrapper">
 							<div class="product-img">
 								<a href="product-details.html#">
-									<img src="/static/img/product/1.jpg" alt="book" class="primary" />
+									<img src="{% static 'img/product/1.jpg' %}" alt="book" class="primary" />
 								</a>
 								<div class="quick-view">
 									<a class="action-view" href="product-details.html#" data-target="#productModal" data-toggle="modal" title="Quick View">

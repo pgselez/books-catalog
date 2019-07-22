@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect, reverse
 from django.db.models import Count
 
 from django.views.generic import TemplateView, DetailView, ListView
+from django.contrib import messages
 
-from .models import Category, Book
+from .models import Category, Book, Review
+from .forms import RewiewForm
 from .parser import run
 from threading import Thread
 
@@ -55,6 +57,34 @@ class BookListView(ListView):
 class BookView(DetailView):
     model = Book
     template_name = 'book.html'
+
+    def post(self, request, **kwargs):
+        slug = kwargs.get('slug')
+        book = Book.objects.get(slug=slug)
+        form = RewiewForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            Review.objects.create(
+                book=book,
+                nickname=data['nickname'],
+                summary=data['summary'],
+                review=data['message']
+            )
+            messages.add_message(
+                request, messages.INFO,
+                'Your review is on moderation'
+            )
+        else:
+            messages.add_message(
+                request, messages.ERROR,
+                'Something wrong with your review...'
+            )
+        return redirect(request.build_absolute_uri()+'#message')
+
+        # self.object = self.get_object()
+        # context = self.get_context_data(object=self.object)
+        # context['form'] = form
+        # return self.render_to_response(context)
 
 
 def crawler(request, **kwargs):

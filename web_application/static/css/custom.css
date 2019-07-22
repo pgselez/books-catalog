@@ -27,3 +27,24 @@
     margin-top: 20px;
     margin-bottom: 20px;
 }
+
+
+.review-form .single-form .form-input-wrapper {
+    display: inline-block;
+    float: left;
+    padding-left: 20px;
+}
+
+.review-form .single-form input {
+    border: 1px solid #c2c2c2;
+    height: 35px;
+    padding: 5px 9px;
+    width: 350px;
+}
+
+.review-form .single-form textarea {
+    border: 1px solid #c2c2c2;
+    padding: 5px 9px;
+    width: 350px;
+    margin-left: 20px;
+}

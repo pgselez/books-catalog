@@ -72,6 +72,7 @@ class Book(models.Model):
 
 class Review(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    publish = models.BooleanField(default=False)
     nickname = models.CharField(max_length=255)
     summary = models.CharField(max_length=255)
     review = models.TextField()
