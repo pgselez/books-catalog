@@ -27,6 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('summernote/', include('django_summernote.urls')),
     path('', views.IndexView.as_view(), name='index'),
+    path('search', views.SearchView.as_view(), name='search'),
     path('run-crawler', views.crawler, name='crawler'),
     path('robots.txt', robots_txt_view, name='robots_txt'),
     path('category/<slug:slug>/', views.BookListView.as_view(), name='catalog'),

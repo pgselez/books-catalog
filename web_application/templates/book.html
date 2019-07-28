@@ -30,8 +30,8 @@
 						<div class="col-lg-5 col-md-5 col-sm-6 col-xs-12">
 							<div class="flexslider">
 								<ul class="slides">
-									<li data-thumb="/static/img/thum-2/1.jpg">
-									  <img src="{{ book.origin_image }}" alt="{{ book.name }}" />
+									<li>
+									  <img src="{{ book.photo_set.all.0.photo.url }}" alt="{{ book.name }}" />
 									</li>
 								</ul>
 							</div>
@@ -61,20 +61,14 @@
 						{% endfor %}
 					{% endif %}
 
-					{% if form.subject.errors %}
-						<ol>
-						{% for error in form.subject.errors %}
-							<li><strong>{{ error|escape }}</strong></li>
-						{% endfor %}
-						</ol>
-					{% endif %}
+					<div id="massage"></div>
 
 					<ul class="nav nav-tabs" role="tablist">
 						<li class="active"><a href="#details" data-toggle="tab">Details</a></li>
 						<li><a href="#reviews" data-toggle="tab">Reviews 3</a></li>
 					</ul>
 					<div class="tab-content">
-						<div class="tab-pane active" id="Details">
+						<div class="tab-pane active" id="details">
 							<div class="valu">
 								<h4>Original Title</h4>
 								<p>{{ object.original_title }}</p>
@@ -130,25 +124,31 @@
 								<div class="review-add">
 									<h3>Do you recommend this book?</h3>
 								</div>
+<!--								<form id="review_form" action="javascript:void(0);"-->
+<!--									  onsubmit="submitReview();" method="post">-->
+
 								<form action="{% url 'book' object.slug  %}" method="post">
 									{% csrf_token %}
 									<div class="review-form">
 										<div class="single-form">
+											{{ form.nickname.errors }}
 											<label>Nickname <sup>*</sup></label>
 											<div class="form-input-wrapper">
-											<input type="text" name="nickname" />
+											{{ form.nickname }}
 											</div>
 										</div>
 										<div class="single-form single-form-2">
+											{{ form.summary.errors }}
 											<label>Summary <sup>*</sup></label>
 											<div class="form-input-wrapper">
-											<input type="text" name="summary" />
+											{{ form.summary }}
 											</div>
 										</div>
 										<div class="single-form">
+											{{ form.message.errors }}
 											<label>Review <sup>*</sup></label>
 											<div class="form-input-wrapper">
-											<textarea name="message" cols="10" rows="4"></textarea>
+											{{ form.message }}
 											</div>
 										</div>
 									</div>
@@ -164,361 +164,89 @@
 				<!-- new-book-area-start -->
 				<div class="new-book-area mt-60">
 					<div class="section-title text-center mb-30">
-						<h3>upsell products</h3>
+						<h3>Other Books from {{ object.cats.all.0.name }} category</h3>
 					</div>
-					<div class="tab-active-2 owl-carousel">
-						<!-- single-product-start -->
-						<div class="product-wrapper">
-							<div class="product-img">
-								<a href="product-details.html#">
-									<img src="{% static 'img/product/1.jpg' %}" alt="book" class="primary" />
-								</a>
-								<div class="quick-view">
-									<a class="action-view" href="product-details.html#" data-target="#productModal" data-toggle="modal" title="Quick View">
-										<i class="fa fa-search-plus"></i>
-									</a>
+					<div class="row">
+							{% for book in random_books %}
+							<div class="col-lg-3 col-md-4 col-sm-6">
+								<!-- single-product-start -->
+								<div class="product-wrapper mb-40">
+									<div class="product-img">
+										<a href="{% url 'book' book.slug %}">
+											{% if book.photo_set.all.0.photo.url %}
+											<img src="{{ book.photo_set.all.0.photo.url }}"
+												 alt="{{ book.name }}"
+												 class="primary"
+												 style="max-height: 300px;"
+											/>
+											{% else %}
+											<img src="{% static 'img/nocoverimg.jpg' %}"
+												 alt="{{ book.name }}"
+												 class="primary"
+												 style="max-height: 300px;"
+											/>
+											{% endif %}
+										</a>
+									</div>
+									<div class="product-details text-center">
+										<h4>
+											<a href="{% url 'book' book.slug %}">{{book.name | truncatewords:10}}</a>
+										</h4>
+									</div>
 								</div>
-								<div class="product-flag">
-									<ul>
-										<li><span class="sale">new</span></li>
-										<li><span class="discount-percentage">-5%</span></li>
-									</ul>
-								</div>
+								<!-- single-product-end -->
 							</div>
-							<div class="product-details text-center">
-								<div class="product-rating">
-									<ul>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-									</ul>
-								</div>
-								<h4><a href="product-details.html#">Joust Duffle Bag</a></h4>
-								<div class="product-price">
-									<ul>
-										<li>$60.00</li>
-									</ul>
-								</div>
-							</div>
-							<div class="product-link">
-								<div class="product-button">
-									<a href="product-details.html#" title="Add to cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-								</div>
-								<div class="add-to-link">
-									<ul>
-										<li><a href="product-details.html" title="Details"><i class="fa fa-external-link"></i></a></li>
-									</ul>
-								</div>
-							</div>	
+							{% endfor %}
 						</div>
-						<!-- single-product-end -->
-						<!-- single-product-start -->
-						<div class="product-wrapper">
-							<div class="product-img">
-								<a href="product-details.html#">
-									<img src="/static/img/product/3.jpg" alt="book" class="primary" />
-								</a>
-								<div class="quick-view">
-									<a class="action-view" href="product-details.html#" data-target="#productModal" data-toggle="modal" title="Quick View">
-										<i class="fa fa-search-plus"></i>
-									</a>
-								</div>
-								<div class="product-flag">
-									<ul>
-										<li><span class="sale">new</span></li>
-									</ul>
-								</div>
-							</div>
-							<div class="product-details text-center">
-								<div class="product-rating">
-									<ul>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-									</ul>
-								</div>
-								<h4><a href="product-details.html#">Chaz Kangeroo Hoodie</a></h4>
-								<div class="product-price">
-									<ul>
-										<li>$52.00</li>
-									</ul>
-								</div>
-							</div>
-							<div class="product-link">
-								<div class="product-button">
-									<a href="product-details.html#" title="Add to cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-								</div>
-								<div class="add-to-link">
-									<ul>
-										<li><a href="product-details.html" title="Details"><i class="fa fa-external-link"></i></a></li>
-									</ul>
-								</div>
-							</div>	
-						</div>
-						<!-- single-product-end -->
-						<!-- single-product-start -->
-						<div class="product-wrapper">
-							<div class="product-img">
-								<a href="product-details.html#">
-									<img src="/static/img/product/5.jpg" alt="book" class="primary" />
-								</a>
-								<div class="quick-view">
-									<a class="action-view" href="product-details.html#" data-target="#productModal" data-toggle="modal" title="Quick View">
-										<i class="fa fa-search-plus"></i>
-									</a>
-								</div>
-								<div class="product-flag">
-									<ul>
-										<li><span class="discount-percentage">-5%</span></li>
-									</ul>
-								</div>
-							</div>
-							<div class="product-details text-center">
-								<div class="product-rating">
-									<ul>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-									</ul>
-								</div>
-								<h4><a href="product-details.html#">Set of Sprite Yoga Straps</a></h4>
-								<div class="product-price">
-									<ul>
-										<li> <span>Starting at</span>$34.00</li>
-									</ul>
-								</div>
-							</div>
-							<div class="product-link">
-								<div class="product-button">
-									<a href="product-details.html#" title="Add to cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-								</div>
-								<div class="add-to-link">
-									<ul>
-										<li><a href="product-details.html" title="Details"><i class="fa fa-external-link"></i></a></li>
-									</ul>
-								</div>
-							</div>	
-						</div>
-						<!-- single-product-end -->
-						<!-- single-product-start -->
-						<div class="product-wrapper">
-							<div class="product-img">
-								<a href="product-details.html#">
-									<img src="/static/img/product/7.jpg" alt="book" class="primary" />
-								</a>
-								<div class="quick-view">
-									<a class="action-view" href="product-details.html#" data-target="#productModal" data-toggle="modal" title="Quick View">
-										<i class="fa fa-search-plus"></i>
-									</a>
-								</div>
-								<div class="product-flag">
-									<ul>
-										<li><span class="sale">new</span></li>
-										<li><span class="discount-percentage">-5%</span></li>
-									</ul>
-								</div>
-							</div>
-							<div class="product-details text-center">
-								<div class="product-rating">
-									<ul>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-										<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-									</ul>
-								</div>
-								<h4><a href="product-details.html#">Strive Shoulder Pack</a></h4>
-								<div class="product-price">
-									<ul>
-										<li>$30.00</li>
-										<li class="old-price">$32.00</li>
-									</ul>
-								</div>
-							</div>
-							<div class="product-link">
-								<div class="product-button">
-									<a href="product-details.html#" title="Add to cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-								</div>
-								<div class="add-to-link">
-									<ul>
-										<li><a href="product-details.html" title="Details"><i class="fa fa-external-link"></i></a></li>
-									</ul>
-								</div>
-							</div>	
-						</div>
-						<!-- single-product-end -->	
-					</div>
+<!--					<div class="tab-active-2 owl-carousel">-->
+<!--						&lt;!&ndash; single-product-start &ndash;&gt;-->
+<!--						{% for cat_book in random_books %}-->
+<!--						<div class="product-wrapper">-->
+<!--							<div class="product-img">-->
+<!--								<a href="{% url 'book' cat_book.slug %}">-->
+<!--									<img src="{{ cat_book.photo_set.all.0.photo.url }}"-->
+<!--										 alt="{{cat_book.name}}" class="primary custom" />-->
+<!--								</a>-->
+<!--							</div>-->
+<!--							<div class="product-details text-center">-->
+<!--								<h4><a href="{% url 'book' cat_book.slug %}">{{cat_book.name}}</a></h4>-->
+<!--							</div>-->
+<!--						</div>-->
+<!--						&lt;!&ndash; single-product-end &ndash;&gt;-->
+<!--						{% endfor %}-->
+<!--					</div>-->
 				</div>
 				<!-- new-book-area-start -->
 			</div>
 			<div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
 				<div class="shop-left">
 					<div class="left-title mb-20">
-						<h4>Related Products</h4>
+						<h4>Other books from <br>{{object.owner}}</h4>
 					</div>
 					<div class="random-area mb-30">
 						<div class="product-active-2 owl-carousel">
 							<div class="product-total-2">
+								{% for abook in author_books %}
 								<div class="single-most-product bd mb-18">
 									<div class="most-product-img">
-										<a href="product-details.html#"><img src="/static/img/product/20.jpg" alt="book" /></a>
+										<a href="product-details.html#">
+											<img src="{{ abook.photo_set.all.0.photo.url }}" alt="{{abook.name}}" />
+										</a>
 									</div>
 									<div class="most-product-content">
-										<div class="product-rating">
-											<ul>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-											</ul>
-										</div>
-										<h4><a href="product-details.html#">Endeavor Daytrip</a></h4>
-										<div class="product-price">
-											<ul>
-												<li>$30.00</li>
-												<li class="old-price">$33.00</li>
-											</ul>
-										</div>
+										<h4><a href="{% url 'book' abook.slug %}">{{abook.name}}</a></h4>
 									</div>
 								</div>
-								<div class="single-most-product bd mb-18">
-									<div class="most-product-img">
-										<a href="product-details.html#"><img src="/static/img/product/21.jpg" alt="book" /></a>
-									</div>
-									<div class="most-product-content">
-										<div class="product-rating">
-											<ul>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-											</ul>
-										</div>
-										<h4><a href="product-details.html#">Savvy Shoulder Tote</a></h4>
-										<div class="product-price">
-											<ul>
-												<li>$30.00</li>
-												<li class="old-price">$35.00</li>
-											</ul>
-										</div>
-									</div>
-								</div>
-								<div class="single-most-product">
-									<div class="most-product-img">
-										<a href="product-details.html#"><img src="/static/img/product/22.jpg" alt="book" /></a>
-									</div>
-									<div class="most-product-content">
-										<div class="product-rating">
-											<ul>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-											</ul>
-										</div>
-										<h4><a href="product-details.html#">Compete Track Tote</a></h4>
-										<div class="product-price">
-											<ul>
-												<li>$35.00</li>
-											</ul>
-										</div>
-									</div>
-								</div>
+								{% endfor %}
 							</div>
-							<div class="product-total-2">
-								<div class="single-most-product bd mb-18">
-									<div class="most-product-img">
-										<a href="product-details.html#"><img src="/static/img/product/23.jpg" alt="book" /></a>
-									</div>
-									<div class="most-product-content">
-										<div class="product-rating">
-											<ul>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-											</ul>
-										</div>
-										<h4><a href="product-details.html#">Voyage Yoga Bag</a></h4>
-										<div class="product-price">
-											<ul>
-												<li>$30.00</li>
-												<li class="old-price">$33.00</li>
-											</ul>
-										</div>
-									</div>
-								</div>
-								<div class="single-most-product bd mb-18">
-									<div class="most-product-img">
-										<a href="product-details.html#"><img src="/static/img/product/24.jpg" alt="book" /></a>
-									</div>
-									<div class="most-product-content">
-										<div class="product-rating">
-											<ul>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-											</ul>
-										</div>
-										<h4><a href="product-details.html#">Impulse Duffle</a></h4>
-										<div class="product-price">
-											<ul>
-												<li>$70.00</li>
-												<li class="old-price">$74.00</li>
-											</ul>
-										</div>
-									</div>
-								</div>
-								<div class="single-most-product">
-									<div class="most-product-img">
-										<a href="product-details.html#"><img src="/static/img/product/22.jpg" alt="book" /></a>
-									</div>
-									<div class="most-product-content">
-										<div class="product-rating">
-											<ul>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-												<li><a href="product-details.html#"><i class="fa fa-star"></i></a></li>
-											</ul>
-										</div>
-										<h4><a href="product-details.html#">Fusion Backpack</a></h4>
-										<div class="product-price">
-											<ul>
-												<li>$59.00</li>
-											</ul>
-										</div>
-									</div>
-								</div>
-							</div>	
 						</div>
 					</div>
 					<div class="banner-area mb-30">
 						<div class="banner-img-2">
-							<a href="product-details.html#"><img src="/static/img/banner/33.jpg" alt="banner" /></a>
+							<a href="product-details.html#">
+								<img src="/static/img/banner/33.jpg" alt="banner" />
+							</a>
 						</div>
-					</div>
-					<div class="left-title-2 mb-30">
-						<h2>Compare Products</h2>
-						<p>You have no items to compare.</p>
-					</div>
-					<div class="left-title-2">
-						<h2>My Wish List</h2>
-						<p>You have no items in your wish list.</p>
 					</div>
 				</div>
 			</div>

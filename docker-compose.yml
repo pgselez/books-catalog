@@ -6,9 +6,24 @@ services:
     image: postgres
     env_file: ./web_application/web.env
     ports:
-      - "5444:5432"
+      - "5433:5432"
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
+
+#  elastic:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:7.2.0
+#    environment:
+#      - cluster.name=docker-cluster
+#      - bootstrap.memory_lock=true
+#      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#    volumes:
+#      - ./elastic_data:/usr/share/elasticsearch/data
+#    ports:
+#      - "9201:9200"
 
   web:
     build: ./web_application
@@ -17,9 +32,10 @@ services:
     volumes:
       - ./web_application:/code
     ports:
-      - "8000:8000"
+      - "8001:8000"
     depends_on:
       - db
+      - elastic
 
   nginx:
     build: ./nginx

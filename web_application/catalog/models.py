@@ -41,12 +41,35 @@ class Character(models.Model):
         return super().save(*args, **kwargs)
 
 
+class Author(models.Model):
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
+
+    link = models.URLField(max_length=255)
+    photo_origin = models.URLField(max_length=255, null=True)
+    photo = models.ImageField(blank=True, upload_to='authors', null=True)
+    biography = models.TextField(null=True)
+
+    objects = models.Manager()
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        return super().save(*args, **kwargs)
+
+
 class Book(models.Model):
     name = models.CharField(max_length=255)
+    goodreads_id = models.IntegerField()
     slug = models.SlugField(max_length=255, blank=True, unique=True)
     source = models.URLField(blank=True)
     description = models.TextField(blank=True)
     origin_image = models.URLField(blank=True)
+
+    owner = models.ForeignKey(Author, on_delete=models.CASCADE, blank=True, null=True)
 
     original_title = models.CharField(max_length=255, blank=True)
     isbn = models.CharField(max_length=255, blank=True)

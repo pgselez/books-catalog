@@ -15,93 +15,118 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "books_catalog.settings")
 django.setup()
 
 
-from catalog.models import Book, Category, Character, Photo
+from catalog.models import *
 
 
-def worker(url):
+def worker(gr_id):
 
     cats_dict = {c.name: c for c in Category.objects.all()}
 
     with HTMLSession() as session:
+
+        url = f'https://www.goodreads.com/book/show/{gr_id}.aaaaaa'
+
         response = session.get(url)
+
         if response.status_code != 200:
             print('ERROR', url)
             return
+
+        book = {'goodreads_id': gr_id}
+
         try:
 
-            name = response.html.xpath('//h1')[0].text
+            book['name'] = response.html.xpath('//h1')[0].text
 
             try:
-                description = response.html.xpath('//div[@id="description"]/span[2]')[0].text
+                book['description'] = response.html.xpath('//div[@id="description"]/span[2]')[0].text
             except IndexError:
-                description = ''
+                book['description'] = ''
 
             try:
-                image = response.html.xpath('//img[@id="coverImage"]/@src')[0]
+                book['origin_image'] = response.html.xpath('//img[@id="coverImage"]/@src')[0]
             except IndexError:
-                image = ''
+                book['origin_image'] = ''
 
             cats = response.html.xpath('//a[@class="actionLinkLite bookPageGenreLink"]/text()')
 
+            caracters = []
             rows = response.html.xpath('//div[@class="clearFloats"]')
-
-            data = {
-                'original_title': '',
-                'isbn': '',
-                'edition_language': '',
-                'characters': [],
-                'literary_awards': ''
-            }
-
             for row in rows:
                 key = row.xpath('//div[@class="infoBoxRowTitle"]')[0].text
                 if key == 'Original Title':
-                    data['original_title'] = row.xpath('//div[@class="infoBoxRowItem"]')[0].text
+                    book['original_title'] = row.xpath('//div[@class="infoBoxRowItem"]')[0].text
                 elif key == 'ISBN':
-                    data['isbn'] = row.xpath('//div[@class="infoBoxRowItem"]')[0].text
+                    book['isbn'] = row.xpath('//div[@class="infoBoxRowItem"]')[0].text
                 elif key == 'Edition Language':
-                    data['edition_language'] = row.xpath('//div[@class="infoBoxRowItem"]')[0].text
+                    book['edition_language'] = row.xpath('//div[@class="infoBoxRowItem"]')[0].text
                 elif key == 'Characters':
                     for link in row.xpath('//div[@class="infoBoxRowItem"]/a'):
                         character = Character(name=link.text, source=link.absolute_links.pop())
                         character.slug = slugify(link.text)
-                        data['characters'].append(character)
+                        caracters.append(character)
                 elif key == 'Literary Awards':
-                    data['literary_awards'] = row.xpath('//div[@class="infoBoxRowItem"]')[0].text
+                    book['literary_awards'] = row.xpath(
+                        '//div[@class="infoBoxRowItem"]')[0].text
         except Exception as e:
             print(e, type(e), sys.exc_info()[-1].tb_lineno, url)
             return
 
+        author = {}
+
         try:
-            Character.objects.bulk_create(
-                data['characters'], ignore_conflicts=True)
+            author['name'] = response.html.xpath(
+                '//div[@class="bookAuthorProfile__name"]/a')[0].text
+        except Exception as e:
+            print(e, type(e), sys.exc_info()[-1].tb_lineno, url)
+
+        try:
+            author['link'] = response.html.xpath(
+                '//div[@class="bookAuthorProfile__name"]/a/@href')[0]
+            author['link'] = 'https://www.goodreads.com' + author['link']
+        except Exception as e:
+            print(e, type(e), sys.exc_info()[-1].tb_lineno, url)
+
+        try:
+            author['photo_origin'] = response.html.xpath(
+                '//div[@class="bookAuthorProfile__photo"]/@style')[0][22:-2]
+
+            img_resp = session.get(author['photo_origin'])
+            image_name = author['photo_origin'].split('/')[-1]
+            with open(f'media/authors/{image_name}', 'wb') as imgf:
+                imgf.write(img_resp.content)
+
+            author['photo'] = f'authors/{image_name}'
+
+        except Exception as e:
+            print(e, type(e), sys.exc_info()[-1].tb_lineno, url)
+
+        try:
+            author['biography'] = response.html.xpath(
+                '//div[@class="bookAuthorProfile__about"]/'
+                'span[contains(@id, "freeText")][2]'
+            )[0].text
+        except Exception as e:
+            print(e, type(e), sys.exc_info()[-1].tb_lineno, url)
+
+        author, created = Author.objects.get_or_create(**author)
+
+        try:
+            Character.objects.bulk_create(caracters, ignore_conflicts=True)
         except Exception as e:
             print(e, type(e), sys.exc_info()[-1].tb_lineno)
 
         try:
             chars = Character.objects.filter(
-                slug__in=[x.slug for x in data['characters']])
+                slug__in=[x.slug for x in caracters])
         except Exception as e:
             print(e, type(e), sys.exc_info()[-1].tb_lineno)
             chars = []
 
         try:
-            book = Book.objects.get(name=name)
-            book.original_title = data['original_title']
-            book.isbn = data['isbn']
-            book.edition_language = data['edition_language']
-            book.literary_awards = data['literary_awards']
+            book, created = Book.objects.get_or_create(**book)
+            book.owner = author
             book.save()
-        except ObjectDoesNotExist:
-            book = Book.objects.create(
-                name=name,
-                description=description,
-                origin_image=image,
-                original_title=data['original_title'],
-                isbn=data['isbn'],
-                edition_language=data['edition_language'],
-                literary_awards=data['literary_awards'],
-            )
 
             for cat in cats:
                 if cat in cats_dict:
@@ -110,19 +135,22 @@ def worker(url):
                     category = Category.objects.create(name=cat)
                 book.cats.add(category)
 
-        for char in chars:
-            book.char.add(char)
+            for char in chars:
+                book.char.add(char)
 
-        img_resp = session.get(image)
-        image_name = image.split('/')[-1]
-        with open(f'media/photos/{image_name}', 'wb') as imgf:
-            imgf.write(img_resp.content)
+        except Exception as e:
+            print(e, type(e), sys.exc_info()[-1].tb_lineno)
 
         try:
+            img_resp = session.get(book.origin_image)
+            image_name = book.origin_image.split('/')[-1]
+            with open(f'media/photos/{image_name}', 'wb') as imgf:
+                imgf.write(img_resp.content)
+
             Photo.objects.create(
                 photo=f'photos/{image_name}',
                 name=image_name,
-                original=image,
+                original=book.origin_image,
                 book=book
             )
         except Exception as e:
@@ -132,12 +160,15 @@ def worker(url):
 
 
 def run(start, end, threads=10):
-    base_url = 'https://www.goodreads.com/book/show/{}.aaaaaa'
-    urls = [base_url.format(i) for i in range(start, end)]
+
+    Book.objects.all().delete()
+    Author.objects.all().delete()
+    Category.objects.all().delete()
+    Photo.objects.all().delete()
 
     with ThreadPoolExecutor(max_workers=threads) as executor:
-        executor.map(worker, urls)
+        executor.map(worker, range(start, end))
 
 
 if __name__ == '__main__':
-    run(0, 1000)
+    run(0, 10000)
