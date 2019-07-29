@@ -7,6 +7,6 @@ rm -r static_root/*
 
 python manage.py collectstatic
 
-# gunicorn --workers=4 --reload --bind=web:8000 books_catalog.wsgi:application
+gunicorn --workers=4 --reload --bind=web:8000 books_catalog.wsgi:application
 
-python manage.py runserver web:8000
+#python manage.py runserver web:8000
