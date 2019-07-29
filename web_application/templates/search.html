@@ -90,37 +90,7 @@
 					</div>
 				</div>
 				<!-- tab-area-end -->
-
-				{% if is_paginated %}
-				<!-- pagination-area-start -->
-				<div class="pagination-area mt-50">
-					<div class="list-page-2">
-						<p>Items 1-{{ page_obj.object_list.count }} of {{ paginator.count }}</p>
-					</div>
-					<div class="page-number">
-						<ul>
-							{% if page_obj.has_previous %}
-							<li><a href="?q={{key}}&page={{ page_obj.previous_page_number }}" class="angle">
-								<i class="fa fa-angle-left"></i></a>
-							</li>
-							{% endif %}
-							{% for n in paginator.page_range %}
-								{% if page_obj.number == n %}
-								<li><a href="?q={{key}}&page={{n}}" class="active">{{ n }}</a></li>
-								{% else %}
-								<li><a href="?q={{key}}&page={{n}}">{{ n }}</a></li>
-								{% endif %}
-							{% endfor %}
-							{% if page_obj.has_next %}
-							<li><a href="?q={{key}}&page={{ page_obj.next_page_number }}" class="angle">
-								<i class="fa fa-angle-right"></i></a>
-							</li>
-							{% endif %}
-						</ul>
-					</div>
-				</div>
-				<!-- pagination-area-end -->
-				{% endif %}
+				{% include 'paginator.html' %}
 			</div>
 		</div>
 	</div>

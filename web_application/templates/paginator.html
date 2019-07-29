@@ -1,0 +1,34 @@
+{% load tags_custom %}
+
+{% if is_paginated %}
+<!-- pagination-area-start -->
+<div class="pagination-area mt-50">
+    <div class="list-page-2">
+        <p>Items {% widthratio page_obj.object_list.count 1 page_obj.number|add:-1 %} -
+            {% widthratio page_obj.object_list.count 1 page_obj.number %} of
+            {{ paginator.count }}</p>
+    </div>
+    <div class="page-number">
+        <ul>
+            {% if page_obj.has_previous %}
+            <li><a href="{% url_replace page=page_obj.previous_page_number %}" class="angle">
+                <i class="fa fa-angle-left"></i></a>
+            </li>
+            {% endif %}
+            {% for n in paginator.page_range %}
+                {% if page_obj.number|add:-7 < n and n < page_obj.number|add:7 %}
+                <li><a href="?{% url_replace page=n %}">{{ n }}</a></li>
+                {% elif page_obj.number == n %}
+                <li><a href="?{% url_replace page=n %}" class="active">{{ n }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <li><a href="?{% url_replace page=page_obj.next_page_number %}" class="angle">
+                <i class="fa fa-angle-right"></i></a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+<!-- pagination-area-end -->
+{% endif %}

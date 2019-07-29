@@ -10,8 +10,10 @@
 			<div class="col-lg-12">
 				<div class="breadcrumbs-menu">
 					<ul>
-						<li><a href="product-details.html#">Home</a></li>
-						<li><a href="product-details.html#" class="active">product-details</a></li>
+						<li><a href="{% url 'index' %}">Home</a></li>
+						<li><a href="{% url 'catalog' object.cats.all.0.slug %}">
+							{{ object.cats.all.0.name }}</a></li>
+						<li><a>{{ object.name }}</a></li>
 					</ul>
 				</div>
 			</div>
@@ -190,7 +192,8 @@
 									</div>
 									<div class="product-details text-center">
 										<h4>
-											<a href="{% url 'book' book.slug %}">{{book.name | truncatewords:10}}</a>
+											<a href="{% url 'book' book.slug %}">
+												{{book.name | truncatewords:7}}</a>
 										</h4>
 									</div>
 								</div>
@@ -198,23 +201,6 @@
 							</div>
 							{% endfor %}
 						</div>
-<!--					<div class="tab-active-2 owl-carousel">-->
-<!--						&lt;!&ndash; single-product-start &ndash;&gt;-->
-<!--						{% for cat_book in random_books %}-->
-<!--						<div class="product-wrapper">-->
-<!--							<div class="product-img">-->
-<!--								<a href="{% url 'book' cat_book.slug %}">-->
-<!--									<img src="{{ cat_book.photo_set.all.0.photo.url }}"-->
-<!--										 alt="{{cat_book.name}}" class="primary custom" />-->
-<!--								</a>-->
-<!--							</div>-->
-<!--							<div class="product-details text-center">-->
-<!--								<h4><a href="{% url 'book' cat_book.slug %}">{{cat_book.name}}</a></h4>-->
-<!--							</div>-->
-<!--						</div>-->
-<!--						&lt;!&ndash; single-product-end &ndash;&gt;-->
-<!--						{% endfor %}-->
-<!--					</div>-->
 				</div>
 				<!-- new-book-area-start -->
 			</div>
@@ -229,8 +215,14 @@
 								{% for abook in author_books %}
 								<div class="single-most-product bd mb-18">
 									<div class="most-product-img">
-										<a href="product-details.html#">
-											<img src="{{ abook.photo_set.all.0.photo.url }}" alt="{{abook.name}}" />
+										<a href="{% url 'book' abook.slug %}">
+											{% if abook.photo_set.all.0.photo.url %}
+											<img src="{{ abook.photo_set.all.0.photo.url }}"
+												 alt="{{abook.name}}" />
+											{% else %}
+											<img src="{% static 'img/nocoverimg.jpg' %}"
+												 alt="{{abook.name}}" />
+											{% endif %}
 										</a>
 									</div>
 									<div class="most-product-content">
@@ -243,7 +235,7 @@
 					</div>
 					<div class="banner-area mb-30">
 						<div class="banner-img-2">
-							<a href="product-details.html#">
+							<a href="#">
 								<img src="/static/img/banner/33.jpg" alt="banner" />
 							</a>
 						</div>
