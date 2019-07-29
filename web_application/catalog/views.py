@@ -128,10 +128,10 @@ class SearchView(FormMixin, ListView):
 
 def crawler(request, **kwargs):
     if request.user.is_authenticated:
-        start = request.GET.get('start', 0)
-        end = request.GET.get('end', 100000)
+        last = Book.objects.latest('goodreads_id')
+        end = 100000000000
         try:
-            start = int(start)
+            start = int(last.goodreads_id)
         except Exception as e:
             print(e, type(e))
             start = 0

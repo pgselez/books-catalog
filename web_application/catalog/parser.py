@@ -20,8 +20,6 @@ from catalog.models import *
 
 def worker(gr_id):
 
-    cats_dict = {c.name: c for c in Category.objects.all()}
-
     with HTMLSession() as session:
 
         url = f'https://www.goodreads.com/book/show/{gr_id}.aaaaaa'
@@ -50,7 +48,7 @@ def worker(gr_id):
 
             cats = response.html.xpath('//a[@class="actionLinkLite bookPageGenreLink"]/text()')
 
-            caracters = []
+            chars = []
             rows = response.html.xpath('//div[@class="clearFloats"]')
             for row in rows:
                 key = row.xpath('//div[@class="infoBoxRowTitle"]')[0].text
@@ -62,9 +60,12 @@ def worker(gr_id):
                     book['edition_language'] = row.xpath('//div[@class="infoBoxRowItem"]')[0].text
                 elif key == 'Characters':
                     for link in row.xpath('//div[@class="infoBoxRowItem"]/a'):
-                        character = Character(name=link.text, source=link.absolute_links.pop())
-                        character.slug = slugify(link.text)
-                        caracters.append(character)
+                        character = {
+                            'name': link.text,
+                            'source': link.absolute_links.pop(),
+                            'slug': slugify(link.text)
+                        }
+                        chars.append(character)
                 elif key == 'Literary Awards':
                     book['literary_awards'] = row.xpath(
                         '//div[@class="infoBoxRowItem"]')[0].text
@@ -109,33 +110,19 @@ def worker(gr_id):
         except Exception as e:
             print(e, type(e), sys.exc_info()[-1].tb_lineno, url)
 
-        author, created = Author.objects.get_or_create(**author)
-
         try:
-            Character.objects.bulk_create(caracters, ignore_conflicts=True)
-        except Exception as e:
-            print(e, type(e), sys.exc_info()[-1].tb_lineno)
+            author, created = Author.objects.get_or_create(**author)
 
-        try:
-            chars = Character.objects.filter(
-                slug__in=[x.slug for x in caracters])
-        except Exception as e:
-            print(e, type(e), sys.exc_info()[-1].tb_lineno)
-            chars = []
-
-        try:
             book, created = Book.objects.get_or_create(**book)
             book.owner = author
             book.save()
 
             for cat in cats:
-                if cat in cats_dict:
-                    category = cats_dict[cat]
-                else:
-                    category = Category.objects.create(name=cat)
+                category, created = Category.objects.get_or_create(name=cat)
                 book.cats.add(category)
 
             for char in chars:
+                char, created = Character.objects.get_or_create(**char)
                 book.char.add(char)
 
         except Exception as e:
@@ -160,12 +147,10 @@ def worker(gr_id):
 
 
 def run(start, end, threads=10):
-
-    Book.objects.all().delete()
-    Author.objects.all().delete()
-    Category.objects.all().delete()
-    Photo.objects.all().delete()
-
+    # Book.objects.all().delete()
+    # Author.objects.all().delete()
+    # Category.objects.all().delete()
+    # Photo.objects.all().delete()
     with ThreadPoolExecutor(max_workers=threads) as executor:
         executor.map(worker, range(start, end))
 
