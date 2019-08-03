@@ -69,6 +69,14 @@ class PhotoAdmin(admin.ModelAdmin):
     raw_id_fields = ['book', 'character']
 
 
+class AuthorAdmin(admin.ModelAdmin):
+    list_display = ['name']
+
+
+class TagAdmin(admin.ModelAdmin):
+    list_display = ['name']
+
+
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
 
@@ -92,3 +100,5 @@ admin.site.register(Category, CategoryAdmin)
 admin.site.register(Review, ReviewAdmin)
 admin.site.register(Photo, PhotoAdmin)
 admin.site.register(Character)
+admin.site.register(Author, AuthorAdmin)
+admin.site.register(Tag, TagAdmin)

@@ -1,0 +1,167 @@
+{% extends 'home.html' %}
+
+{% load static %}
+
+{% block content %}
+<!-- breadcrumbs-area-start -->
+<!--<div class="breadcrumbs-area mb-70">-->
+<div class="breadcrumbs-area mb-40">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="breadcrumbs-menu">
+					<ul>
+						<li><a href="{% url 'index' %}">Home</a></li>
+						<li><span class="active">{{ main_cat.name }}</span></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- breadcrumbs-area-end -->
+<!-- shop-main-area-start -->
+<div class="shop-main-area mb-40">
+<!--<div class="shop-main-area">-->
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+				<div class="shop-left">
+					<div class="left-title mb-20">
+						<h4>See also:</h4>
+					</div>
+					<div class="left-menu mb-30">
+						<ul>
+							{% for tag in tags %}
+							<li><a href="{% url 'tag' tag.slug %}">{{tag.name}}</a></li>
+							{% endfor %}
+						</ul>
+					</div>
+					<div class="banner-area mb-30">
+						<div class="banner-img-2">
+							<a href="#">
+								<img src="/static/img/banner/31.jpg" alt="banner" />
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+				<div class="section-title-5 mb-30">
+					<h1>Books about {{ object.name }}</h1>
+				</div>
+				<div class="toolbar mb-30">
+					<div class="shop-tab">
+						<div class="tab-3">
+							<ul>
+								<li class="active">
+									<a href="#th" data-toggle="tab">
+										<i class="fa fa-th-large"></i>Grid
+									</a>
+								</li>
+								<li>
+									<a href="#list" data-toggle="tab">
+										<i class="fa fa-bars"></i>List
+									</a>
+								</li>
+							</ul>
+						</div>
+						<div class="list-page">
+							<p>Items {% widthratio page_obj.object_list.count 1 page_obj.number|add:-1 %} -
+							{% widthratio page_obj.object_list.count 1 page_obj.number %} of
+							{{ paginator.count }}</p>
+						</div>
+					</div>
+					<div class="toolbar-sorter">
+						<span>Sort By</span>
+						<select id="sorter" class="sorter-options" data-role="sorter">
+							<option selected="selected" value="name">Book Name</option>
+							<option value="name">Author</option>
+						</select>
+						<a href="#"><i class="fa fa-arrow-up"></i></a>
+					</div>
+				</div>
+				<!-- tab-area-start -->
+				<div class="tab-content">
+					<div class="tab-pane active" id="th">
+						<div class="row">
+
+							{% for book in object_list %}
+
+							<div class="col-lg-3 col-md-4 col-sm-6">
+								<!-- single-product-start -->
+								<div class="product-wrapper mb-40">
+									<div class="product-img">
+										<a href="{% url 'book' book.slug %}">
+
+											{% if book.photo_set.all.0.photo.url %}
+
+											<img src="{{ book.photo_set.all.0.photo.url }}"
+												 alt="{{ book.name }}"
+												 class="primary"
+												 style="max-height: 300px;"
+											/>
+
+											{% else %}
+
+											<img src="{% static 'img/nocoverimg.jpg' %}"
+												 alt="{{ book.name }}"
+												 class="primary"
+												 style="max-height: 300px;"
+											/>
+
+											{% endif %}
+
+										</a>
+									</div>
+									<div class="product-details text-center">
+										<h4>
+											<a href="{% url 'book' book.slug %}">{{book.name | truncatewords:10}}</a>
+										</h4>
+									</div>
+								</div>
+								<!-- single-product-end -->
+							</div>
+
+							{% endfor %}
+
+						</div>
+					</div>
+
+					<div class="tab-pane fade" id="list">
+						<!-- single-shop-start -->
+						{% for book in object_list %}
+						<div class="single-shop mb-30">
+							<div class="row">
+								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+									<div class="product-wrapper-2">
+										<div class="product-img">
+											<a href="{% url 'book' book.slug %}">
+												<img src="{{book.origin_image}}" alt="{{book.name}}" class="primary" />
+											</a>
+										</div>
+									</div>
+								</div>
+								<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+									<div class="product-wrapper-content">
+										<div class="product-details">
+											<h4><a href="{% url 'book' book.slug %}">{{book.name}}</a></h4>
+											<p>{{ book.description | truncatewords:30 }}
+											</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						{% endfor %}
+						<!-- single-shop-end -->
+					</div>
+				</div>
+				<!-- tab-area-end -->
+				{% include 'paginator.html' %}
+			</div>
+		</div>
+	</div>
+</div>
+<!-- shop-main-area-end -->
+{% endblock %}

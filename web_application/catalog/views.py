@@ -1,8 +1,7 @@
 import random
-from django.shortcuts import render, redirect, reverse
+from threading import Thread
+from django.shortcuts import redirect, reverse
 from django.db.models import Count
-
-from django.http import JsonResponse
 
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
@@ -11,10 +10,11 @@ from django.views.generic.edit import FormMixin
 from django.views.generic import TemplateView, DetailView, ListView
 from django.contrib import messages
 
-from .models import Category, Book, Review
+from .models import Category, Book, Review, Tag
 from .forms import ReviewForm, SearchForm
-from .parser import run
-from threading import Thread
+from .documents import BookIndex
+
+from catalog.management.commands._parser import run
 
 
 class IndexView(TemplateView):
@@ -115,10 +115,25 @@ class SearchView(FormMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         self.keyword = self.request.GET.get('q')
+        tag, created = Tag.objects.get_or_create(name=self.keyword)
+        tag.qcount += 1
+        tag.save()
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        return self.model.objects.filter(name__search=self.keyword)
+        body = {
+            "query": {
+                "multi_match": {
+                    "query": self.keyword,
+                    "fields": ["name", "description"]
+                }
+            }
+        }
+        s = BookIndex.search().from_dict(body)[:1000]
+        s._model = Book
+        qs = s.to_queryset()
+        # return self.model.objects.filter(description__search=self.keyword)
+        return qs.prefetch_related('photo_set')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -126,10 +141,34 @@ class SearchView(FormMixin, ListView):
         return context
 
 
+class TagView(SingleObjectMixin, ListView):
+    model = Book
+    template_name = 'tag.html'
+    paginate_by = 36
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=Tag.objects.all())
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        body = {
+            "query": {
+                "multi_match": {
+                    "query": self.object.name,
+                    "fields": ["name", "description"]
+                }
+            }
+        }
+        s = BookIndex.search().from_dict(body)[:1000]
+        s._model = Book
+        qs = s.to_queryset()
+        return qs.prefetch_related('photo_set')
+
+
 def crawler(request, **kwargs):
     if request.user.is_authenticated:
         last = Book.objects.latest('goodreads_id')
-        end = 100000000000
+        end = 10000
         try:
             start = int(last.goodreads_id)
         except Exception as e:
@@ -139,6 +178,6 @@ def crawler(request, **kwargs):
             end = int(end)
         except Exception as e:
             print(e, type(e))
-            end = 100000
+            end = 10000
         Thread(target=run, args=(start, end)).start()
     return redirect('/admin/')

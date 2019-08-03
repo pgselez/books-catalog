@@ -11,8 +11,10 @@
 				<div class="breadcrumbs-menu">
 					<ul>
 						<li><a href="{% url 'index' %}">Home</a></li>
+						{% if object.cats %}
 						<li><a href="{% url 'catalog' object.cats.all.0.slug %}">
 							{{ object.cats.all.0.name }}</a></li>
+						{% endif %}
 						<li><a>{{ object.name }}</a></li>
 					</ul>
 				</div>
@@ -164,6 +166,7 @@
 				</div>
 				<!-- product-info-area-end -->
 				<!-- new-book-area-start -->
+				{% if object.cats %}
 				<div class="new-book-area mt-60">
 					<div class="section-title text-center mb-30">
 						<h3>Other Books from {{ object.cats.all.0.name }} category</h3>
@@ -203,6 +206,7 @@
 						</div>
 				</div>
 				<!-- new-book-area-start -->
+				{% endif %}
 			</div>
 			<div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
 				<div class="shop-left">

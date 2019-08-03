@@ -47,8 +47,25 @@ INSTALLED_APPS = [
     'django_summernote',
     'catalog',
     'seo',
-    'debug_toolbar'
+    'debug_toolbar',
+    'django_elasticsearch_dsl',
+    'rest_framework'
 ]
+
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'elastic:9200'
+    },
+}
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
+
 
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -74,7 +91,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'catalog.context_processor.categories'
+                'catalog.context_processor.categories',
+                'catalog.context_processor.tags'
             ],
         },
     },

@@ -21,12 +21,21 @@ from django.conf.urls.static import static
 from catalog import views
 from seo.views import robots_txt_view
 from django.urls import include
+from rest_framework import routers
+from catalog.rest import BookViewSet
+
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+router.register(r'books', BookViewSet)
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api-auth/', include(router.urls)),
     path('summernote/', include('django_summernote.urls')),
     path('', views.IndexView.as_view(), name='index'),
+    path('tag/<slug:slug>/', views.TagView.as_view(), name='tag'),
     path('search', views.SearchView.as_view(), name='search'),
     path('run-crawler', views.crawler, name='crawler'),
     path('robots.txt', robots_txt_view, name='robots_txt'),

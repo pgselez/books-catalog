@@ -10,20 +10,20 @@ services:
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
 
-#  elastic:
-#    image: docker.elastic.co/elasticsearch/elasticsearch:7.2.0
-#    environment:
-#      - cluster.name=docker-cluster
-#      - bootstrap.memory_lock=true
-#      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
-#    ulimits:
-#      memlock:
-#        soft: -1
-#        hard: -1
-#    volumes:
-#      - ./elastic_data:/usr/share/elasticsearch/data
-#    ports:
-#      - "9201:9200"
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.1
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    ulimits:
+      memlock:
+        soft: -2
+        hard: -2
+    volumes:
+      - ./elastic_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
 
   web:
     build: ./web_application
