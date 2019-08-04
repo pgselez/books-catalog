@@ -30,7 +30,7 @@ websockets==7.0
 psycopg2-binary
 gunicorn
 django-elasticsearch-dsl
-django_elasticsearch_dsl
+elasticsearch-dsl>=7.0.0,<8.0.0
 djangorestframework
 markdown
 django-filter
