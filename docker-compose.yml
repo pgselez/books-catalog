@@ -24,7 +24,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - ./elastic_data:/usr/share/elasticsearch/data
+      - esdata:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
     restart: always
@@ -52,3 +52,6 @@ services:
       - 80:80
     depends_on:
       - web
+
+volumes:
+  esdata:
