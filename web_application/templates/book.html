@@ -11,7 +11,7 @@
 				<div class="breadcrumbs-menu">
 					<ul>
 						<li><a href="{% url 'index' %}">Home</a></li>
-						{% if object.cats %}
+						{% if object.cats.all.0 %}
 						<li><a href="{% url 'catalog' object.cats.all.0.slug %}">
 							{{ object.cats.all.0.name }}</a></li>
 						{% endif %}
